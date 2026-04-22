@@ -1,307 +1,136 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Overlay</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: Arial, sans-serif; 
             background: transparent;
             overflow: hidden;
-            width: 100vw;
-            height: 100vh;
         }
-
-        .overlay-container {
-            position: fixed;
-            top: 30px;
-            left: 30px;
+        .scoreboard {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: linear-gradient(135deg, rgba(15, 15, 42, 0.95) 0%, rgba(30, 58, 138, 0.9) 100%);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 15px 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* League Badge */
-        .league-badge {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #1a1a1a 0%, #000 50%, #1a1a1a 100%);
+            border-radius: 10px;
+            padding: 15px 30px;
             color: white;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            margin: 50px auto;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
-
-        /* Teams Container */
-        .teams-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex: 1;
-        }
-
-        /* Team Block */
         .team {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             flex: 1;
         }
-
         .team.right {
             flex-direction: row-reverse;
             text-align: right;
+            justify-content: flex-end;
         }
-
-        .team-logo {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.1);
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: white;
             border-radius: 50%;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
         }
-
-        .team-logo img {
+        .logo img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
-
         .team-name {
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            max-width: 150px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
-
-        /* Scoreboard */
-        .scoreboard {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 12px;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .score {
-            color: white;
-            font-size: 32px;
-            font-weight: 800;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
-            min-width: 40px;
+        .score-box {
             text-align: center;
+            margin: 0 20px;
         }
-
-        .score-divider {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 24px;
-            font-weight: 300;
-        }
-
-        /* Timer & Period */
-        .match-info {
+        .score {
+            font-size: 48px;
+            font-weight: 900;
             display: flex;
-            flex-direction: column;
+            gap: 15px;
             align-items: center;
-            gap: 4px;
-            padding-left: 15px;
-            border-left: 2px solid rgba(255, 255, 255, 0.2);
         }
-
         .timer {
-            color: #60a5fa;
-            font-size: 20px;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-        }
-
-        .period {
-            background: rgba(59, 130, 246, 0.2);
-            color: #93c5fd;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Event Indicator */
-        .event-indicator {
-            position: absolute;
-            bottom: -50px;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.9) 100%);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            display: none;
+            background: #333;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-top: 5px;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            animation: slideUp 0.3s ease-out;
-            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+            font-size: 16px;
         }
-
-        .event-indicator.show {
-            display: flex;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .event-icon {
-            font-size: 18px;
-        }
-
-        /* Pulse Animation for Goals */
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .goal-animation {
-            animation: pulse 0.5s ease-in-out 3;
+        .period {
+            background: #ffd700;
+            color: black;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="overlay-container" id="overlay">
-        <div class="league-badge" id="leagueName">🏆 Чемпіонат обл. (2015-2016 р-н.)</div>
+    <div class="scoreboard">
+        <div class="team">
+            <div class="logo"><img id="logoA" src=""></div>
+            <div class="team-name" id="nameA">TEAM A</div>
+        </div>
         
-        <div class="teams-container">
-            <div class="team left">
-                <div class="team-logo" id="teamALogo">
-                    <span style="color: rgba(255,255,255,0.5);">👕</span>
-                </div>
-                <div class="team-name" id="teamAName">FC CETUS</div>
+        <div class="score-box">
+            <div class="score">
+                <span id="scoreA">0</span>
+                <span>-</span>
+                <span id="scoreB">0</span>
             </div>
-
-            <div class="scoreboard" id="scoreboard">
-                <div class="score" id="scoreA">0</div>
-                <div class="score-divider">:</div>
-                <div class="score" id="scoreB">0</div>
-            </div>
-
-            <div class="team right">
-                <div class="team-logo" id="teamBLogo">
-                    <span style="color: rgba(255,255,255,0.5);">👕</span>
-                </div>
-                <div class="team-name" id="teamBName">FC CHAYKA</div>
+            <div class="timer">
+                <span class="period" id="period">P1</span>
+                <span id="time">00:00</span>
             </div>
         </div>
-
-        <div class="match-info">
-            <div class="timer" id="timer">00:00</div>
-            <div class="period" id="period">1Т</div>
-        </div>
-
-        <div class="event-indicator" id="eventIndicator">
-            <span class="event-icon" id="eventIcon">⚽</span>
-            <span id="eventText">ГОЛ! Вінісіус Жуниор — 67'</span>
+        
+        <div class="team right">
+            <div class="logo"><img id="logoB" src=""></div>
+            <div class="team-name" id="nameB">TEAM B</div>
         </div>
     </div>
 
     <script>
-        // Sync with control panel
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'overlay_state') {
-                updateOverlay();
-            }
-        });
-
-        function updateOverlay() {
-            const state = JSON.parse(localStorage.getItem('overlay_state') || '{}');
-            
-            if (state.league) document.getElementById('leagueName').innerHTML = state.league;
-            if (state.teamA?.name) document.getElementById('teamAName').textContent = state.teamA.name;
-            if (state.teamB?.name) document.getElementById('teamBName').textContent = state.teamB.name;
-            if (state.scoreA !== undefined) document.getElementById('scoreA').textContent = state.scoreA;
-            if (state.scoreB !== undefined) document.getElementById('scoreB').textContent = state.scoreB;
-            if (state.timer) document.getElementById('timer').textContent = state.timer;
-            if (state.period) document.getElementById('period').textContent = state.period;
-            
-            if (state.teamA?.logo) {
-                document.getElementById('teamALogo').innerHTML = `<img src="${state.teamA.logo}" alt="Team A">`;
-            }
-            if (state.teamB?.logo) {
-                document.getElementById('teamBLogo').innerHTML = `<img src="${state.teamB.logo}" alt="Team B">`;
-            }
-
-            // Event indicator
-            const eventIndicator = document.getElementById('eventIndicator');
-            if (state.event) {
-                document.getElementById('eventIcon').textContent = state.event.icon;
-                document.getElementById('eventText').textContent = state.event.text;
-                eventIndicator.classList.add('show');
-                
-                if (state.event.icon === '⚽') {
-                    document.getElementById('scoreboard').classList.add('goal-animation');
-                    setTimeout(() => {
-                        document.getElementById('scoreboard').classList.remove('goal-animation');
-                    }, 1500);
-                }
-            } else {
-                eventIndicator.classList.remove('show');
-            }
+        // Завантаження даних кожні 2 секунди
+        function loadData() {
+            fetch('data.json?t=' + Date.now())
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('scoreA').textContent = data.scoreA;
+                    document.getElementById('scoreB').textContent = data.scoreB;
+                    document.getElementById('nameA').textContent = data.nameA;
+                    document.getElementById('nameB').textContent = data.nameB;
+                    document.getElementById('time').textContent = data.time;
+                    document.getElementById('period').textContent = data.period;
+                    if(data.logoA) document.getElementById('logoA').src = data.logoA;
+                    if(data.logoB) document.getElementById('logoB').src = data.logoB;
+                })
+                .catch(e => console.log('Waiting for data...'));
         }
-
-        // Initial load
-        updateOverlay();
+        
+        loadData();
+        setInterval(loadData, 2000);
     </script>
 </body>
 </html>
